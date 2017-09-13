@@ -18,6 +18,8 @@ type Routes []Route
 var routes = Routes{
 	Route{"Index", "GET", "/", Index},
 	Route{"Tasks", "GET", "/tasks", Tasks},
-	Route{"Task", "GET", "/tasks/{taskId}", Task},
+	Route{"Task", "GET", "/tasks/{taskID}", Task},
 	Route{"CreateTask", "POST", "/tasks", TaskCreate},
+	Route{"DeleteTask", "DELETE", "/tasks/{taskID}", TaskDelete},
+	Route{"UpdateTask", "PUT", "/tasks", TaskUpdate},
 }
