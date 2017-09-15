@@ -11,21 +11,17 @@ import (
 	"strconv"
 
 	"github.com/bgiegel/TodoREST/model"
-	"github.com/bgiegel/TodoREST/repo"
 	"github.com/gorilla/mux"
 )
 
 // Index handle http get request to root element
-func Index(response http.ResponseWriter, req *http.Request) {
+func (app *TodoApp) Index(response http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(response, "Hello, %q", html.EscapeString(req.URL.Path))
 }
 
 // Tasks return all recorded tasks
-func Tasks(response http.ResponseWriter, req *http.Request) {
-	tasks, err := repo.RepoAllTasks()
-	if err != nil {
-		log.Panic(err)
-	}
+func (app *TodoApp) Tasks(response http.ResponseWriter, req *http.Request) {
+	tasks := app.TaskRepo.AllTasks()
 
 	response.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	response.WriteHeader(http.StatusOK)
@@ -36,11 +32,11 @@ func Tasks(response http.ResponseWriter, req *http.Request) {
 }
 
 // Task return the task corrresponding to the ID
-func Task(response http.ResponseWriter, req *http.Request) {
+func (app *TodoApp) Task(response http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	taskID, _ := strconv.Atoi(vars["taskID"])
 
-	task := repo.RepoFindTask(taskID)
+	task := app.TaskRepo.FindTask(taskID)
 
 	response.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	response.WriteHeader(http.StatusOK)
@@ -51,7 +47,7 @@ func Task(response http.ResponseWriter, req *http.Request) {
 }
 
 // TaskCreate create a new Task
-func TaskCreate(response http.ResponseWriter, req *http.Request) {
+func (app *TodoApp) TaskCreate(response http.ResponseWriter, req *http.Request) {
 	var task model.Task
 	body, err := ioutil.ReadAll(io.LimitReader(req.Body, 1048576))
 
@@ -69,7 +65,7 @@ func TaskCreate(response http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	task.ID = repo.RepoCreateTask(task)
+	task.ID = app.TaskRepo.CreateTask(task)
 	response.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	response.WriteHeader(http.StatusCreated)
 
@@ -79,18 +75,18 @@ func TaskCreate(response http.ResponseWriter, req *http.Request) {
 }
 
 //TaskDelete delete a task with corresponding taskID
-func TaskDelete(response http.ResponseWriter, req *http.Request) {
+func (app *TodoApp) TaskDelete(response http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	taskID, _ := strconv.Atoi(vars["taskID"])
 
-	repo.RepoDestroyTask(taskID)
+	app.TaskRepo.DestroyTask(taskID)
 
 	response.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	response.WriteHeader(http.StatusOK)
 }
 
 // TaskCreate create a new Task
-func TaskUpdate(response http.ResponseWriter, req *http.Request) {
+func (app *TodoApp) TaskUpdate(response http.ResponseWriter, req *http.Request) {
 	var task model.Task
 	body, err := ioutil.ReadAll(io.LimitReader(req.Body, 1048576))
 
@@ -107,7 +103,7 @@ func TaskUpdate(response http.ResponseWriter, req *http.Request) {
 		panic(err)
 	}
 
-	if err = repo.RepoUpdateTask(task); err != nil {
+	if err = app.TaskRepo.UpdateTask(task); err != nil {
 		log.Panic(err)
 	} else {
 		log.Printf("Task %d updated with description : '%v' \n", task.ID, task.Description)

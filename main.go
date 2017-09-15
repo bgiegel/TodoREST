@@ -12,7 +12,8 @@ import (
 )
 
 func main() {
-	repo.InitDB()
-	router := web.NewRouter()
+	app := &web.TodoApp{TaskRepo: repo.GetTaskRepository()}
+
+	router := web.NewRouter(app).InitRoutes()
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
