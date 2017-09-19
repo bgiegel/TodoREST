@@ -25,11 +25,7 @@ func NewDB(dataSourceName string) *Repository {
 	var err error
 	db, err := sql.Open("postgres", dataSourceName)
 	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err = db.Ping(); err != nil {
-		log.Fatal(err)
+		log.Panicln(err)
 	}
 
 	if db != nil {
@@ -41,6 +37,6 @@ func NewDB(dataSourceName string) *Repository {
 
 // GetTaskRepository recupère une instance du repo des taches
 func GetTaskRepository() *TaskRepository {
-	db := NewDB("postgres://todo_user:password@localhost/tododb")
+	db := NewDB("postgres://todo_admin:password@tododb/tododb?sslmode=disable")
 	return &TaskRepository{db}
 }

@@ -12,8 +12,11 @@ import (
 )
 
 func main() {
+	log.Println("Starting TodoRest on Port :8080")
+
 	app := &web.TodoApp{TaskRepo: repo.GetTaskRepository()}
 
 	router := web.NewRouter(app).InitRoutes()
+
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

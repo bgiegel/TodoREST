@@ -1,0 +1,35 @@
+version: '3'
+services:
+
+  utils_portainer:
+   image: portainer/portainer
+   volumes:
+     - "/var/run/docker.sock:/var/run/docker.sock"
+   container_name: utils_portainer
+   ports:
+     - "9000:9000"
+  
+  tododb:
+    build: ./docker/db/
+    ports:
+     - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    container_name: tododb
+    hostname: tododb
+
+  todoservice:
+    build: .
+    hostname: todoservice
+    container_name: todoservice
+    ports:
+     - "8080:8080"
+    depends_on: 
+     - tododb
+    links:
+     - tododb
+
+
+volumes:
+  pg-data:
+    external: true
