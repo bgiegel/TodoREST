@@ -4,6 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"fmt"
+	"github.com/auth0-community/auth0"
+	"gopkg.in/square/go-jose.v2"
 )
 
 type TodoRouter struct {
@@ -39,12 +42,35 @@ func (router *TodoRouter) InitRoutes() *TodoRouter {
 		Route{"CreateTask", "POST", "/tasks", router.App.TaskCreate},
 		Route{"DeleteTask", "DELETE", "/tasks/{taskID}", router.App.TaskDelete},
 		Route{"UpdateTask", "PUT", "/tasks", router.App.TaskUpdate},
+		//Route{"GetToken", "GET", "/get-token", router.App.GetToken},
 	}
 
 	for _, route := range routes {
-		handler := Logger(route.HandlerFunc, route.Name)
+		handler := authMiddleware(Logger(route.HandlerFunc, route.Name))
 		router.Methods(route.Method).Path(route.Pattern).Name(route.Name).Handler(handler)
 	}
 
 	return router
+}
+
+func authMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		secret := []byte("w0Y0hcRiufEliTy4_1BFXMUG-_ugfVPASx0WjHRoRITqUJhYETAhqCZZyUk3r1sN")
+		secretProvider := auth0.NewKeyProvider(secret)
+		audience := []string{"todorest"}
+
+		configuration := auth0.NewConfiguration(secretProvider, audience, "https://todo-rest.eu.auth0.com/", jose.HS256)
+		validator := auth0.NewValidator(configuration)
+
+		token, err := validator.ValidateRequest(r)
+
+		if err != nil {
+			fmt.Println(err)
+			fmt.Println("Token is not valid:", token)
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte("Unauthorized"))
+		} else {
+			next.ServeHTTP(w, r)
+		}
+	})
 }

@@ -3,11 +3,35 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "6cix0E5DxNbTBwcrKwGK7tSy3GQ=",
+			"path": "github.com/auth0-community/auth0",
+			"revision": "3de339a55934c49fa256181e63b9ecf0234c15b7",
+			"revisionTime": "2017-08-15T10:36:13Z"
+		},
+		{
+			"checksumSHA1": "KINuoUfjPoHRf2fOfWmVHsmOh0s=",
+			"path": "github.com/auth0/go-jwt-middleware",
+			"revision": "5493cabe49f7bfa6e2ec444a09d334d90cd4e2bd",
+			"revisionTime": "2017-04-25T17:11:59Z"
+		},
+		{
 			"checksumSHA1": "OFu4xJEIjiI8Suu+j/gabfp+y6Q=",
 			"origin": "github.com/stretchr/testify/vendor/github.com/davecgh/go-spew/spew",
 			"path": "github.com/davecgh/go-spew/spew",
 			"revision": "890a5c3458b43e6104ff5da8dfa139d013d77544",
 			"revisionTime": "2017-07-05T02:17:15Z"
+		},
+		{
+			"checksumSHA1": "IkAYIhxmvTQKEJvclIZJoVh9ats=",
+			"path": "github.com/dgrijalva/jwt-go",
+			"revision": "a539ee1a749a2b895533f979515ac7e6e0f5b650",
+			"revisionTime": "2017-06-08T00:51:49Z"
+		},
+		{
+			"checksumSHA1": "sQfEzFcb7I2+swbphLhX7+QSAKs=",
+			"path": "github.com/go-errors/errors",
+			"revision": "8fa88b06e5974e97fbf9899a7f86a344bfd1f105",
+			"revisionTime": "2016-12-05T22:32:45Z"
 		},
 		{
 			"checksumSHA1": "+i76HB4vEOFz+vLYsUmThS6oeQI=",
@@ -41,10 +65,46 @@
 			"revisionTime": "2017-07-05T02:17:15Z"
 		},
 		{
+			"checksumSHA1": "X6Q8nYb+KXh+64AKHwWOOcyijHQ=",
+			"path": "golang.org/x/crypto/ed25519",
+			"revision": "9419663f5a44be8b34ca85f08abc5fe1be11f8a3",
+			"revisionTime": "2017-09-30T17:45:11Z"
+		},
+		{
+			"checksumSHA1": "LXFcVx8I587SnWmKycSDEq9yvK8=",
+			"path": "golang.org/x/crypto/ed25519/internal/edwards25519",
+			"revision": "9419663f5a44be8b34ca85f08abc5fe1be11f8a3",
+			"revisionTime": "2017-09-30T17:45:11Z"
+		},
+		{
 			"checksumSHA1": "uR1qI7p56R7u43DJGoYtyRleQpA=",
 			"path": "gopkg.in/DATA-DOG/go-sqlmock.v1",
 			"revision": "b983233bc0bbea4dc6e8ec8c8c923d935765ffec",
 			"revisionTime": "2017-02-21T15:59:18Z"
+		},
+		{
+			"checksumSHA1": "en2ospY11ClQ1E///cbIfAMDXRg=",
+			"path": "gopkg.in/square/go-jose.v2",
+			"revision": "f8f38de21b4dcd69d0413faf231983f5fd6634b1",
+			"revisionTime": "2017-09-13T18:28:36Z"
+		},
+		{
+			"checksumSHA1": "F0j2Gi4XbePusK/dSlqca5BVPe0=",
+			"path": "gopkg.in/square/go-jose.v2/cipher",
+			"revision": "f8f38de21b4dcd69d0413faf231983f5fd6634b1",
+			"revisionTime": "2017-09-13T18:28:36Z"
+		},
+		{
+			"checksumSHA1": "H2vUbf4u9GqyZ1/48CDVkNQufjQ=",
+			"path": "gopkg.in/square/go-jose.v2/json",
+			"revision": "f8f38de21b4dcd69d0413faf231983f5fd6634b1",
+			"revisionTime": "2017-09-13T18:28:36Z"
+		},
+		{
+			"checksumSHA1": "2Ki1/5t1wPxbhs8dukUI2u2QZ/c=",
+			"path": "gopkg.in/square/go-jose.v2/jwt",
+			"revision": "f8f38de21b4dcd69d0413faf231983f5fd6634b1",
+			"revisionTime": "2017-09-13T18:28:36Z"
 		}
 	],
 	"rootPath": "github.com/bgiegel/TodoREST"
