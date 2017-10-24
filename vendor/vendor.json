@@ -77,6 +77,12 @@
 			"revisionTime": "2017-09-30T17:45:11Z"
 		},
 		{
+			"checksumSHA1": "GtamqiJoL7PGHsN454AoffBFMa8=",
+			"path": "golang.org/x/net/context",
+			"revision": "92447d55896d6f92b4a0d4fd83bd078b0374e8fa",
+			"revisionTime": "2017-10-22T17:59:00Z"
+		},
+		{
 			"checksumSHA1": "uR1qI7p56R7u43DJGoYtyRleQpA=",
 			"path": "gopkg.in/DATA-DOG/go-sqlmock.v1",
 			"revision": "b983233bc0bbea4dc6e8ec8c8c923d935765ffec",

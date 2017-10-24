@@ -20,11 +20,15 @@ func ReadTaskFromRequest(response http.ResponseWriter, req *http.Request) (task 
 }
 
 func unprocessableEntityResponse(response http.ResponseWriter, err error) {
-	response.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	response.WriteHeader(422) // unprocessable entity
-	if err := json.NewEncoder(response).Encode(err); err != nil {
-		panic(err)
-	}
+	respond(response, http.StatusUnprocessableEntity, err)
+}
+
+func ForbiddenResponse(response http.ResponseWriter, err error) {
+	respond(response, http.StatusForbidden, err)
+}
+
+func UnauthorizedResponse(response http.ResponseWriter, err error) {
+	respond(response, http.StatusUnauthorized, err)
 }
 
 func extractBody(req *http.Request) []byte {
@@ -40,16 +44,16 @@ func extractBody(req *http.Request) []byte {
 }
 
 func RespondWithTask(response http.ResponseWriter, task model.Task) {
-	jsonOKResponse(response, task)
+	respond(response, http.StatusCreated, task)
 }
 
 func RespondWithTasks(response http.ResponseWriter, tasks []model.Task) {
-	jsonOKResponse(response, tasks)
+	respond(response, http.StatusCreated, tasks)
 }
 
-func jsonOKResponse(response http.ResponseWriter, value interface{}) {
+func respond(response http.ResponseWriter, httpStatus int, value interface{}) {
 	response.Header().Set("Content-Type", "application/json;charset=UTF-8")
-	response.WriteHeader(http.StatusCreated)
+	response.WriteHeader(httpStatus)
 
 	if err := json.NewEncoder(response).Encode(value); err != nil {
 		panic(err)

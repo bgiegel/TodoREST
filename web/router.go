@@ -5,8 +5,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"fmt"
-	"github.com/auth0-community/auth0"
-	"gopkg.in/square/go-jose.v2"
+	"github.com/dgrijalva/jwt-go"
+	"golang.org/x/net/context"
 )
 
 type TodoRouter struct {
@@ -35,42 +35,55 @@ func NewRouter(app *TodoApp) *TodoRouter {
 
 // InitRoutes initialise la liste des routes d'une application
 func (router *TodoRouter) InitRoutes() *TodoRouter {
-	var routes = Routes{
+	var protectedRoutes = Routes{
 		Route{"Index", "GET", "/", router.App.Index},
 		Route{"Tasks", "GET", "/tasks", router.App.Tasks},
 		Route{"Task", "GET", "/tasks/{taskID}", router.App.Task},
 		Route{"CreateTask", "POST", "/tasks", router.App.TaskCreate},
 		Route{"DeleteTask", "DELETE", "/tasks/{taskID}", router.App.TaskDelete},
 		Route{"UpdateTask", "PUT", "/tasks", router.App.TaskUpdate},
-		//Route{"GetToken", "GET", "/get-token", router.App.GetToken},
 	}
 
-	for _, route := range routes {
-		handler := authMiddleware(Logger(route.HandlerFunc, route.Name))
+	for _, route := range protectedRoutes {
+		handler := validate(Logger(route.HandlerFunc, route.Name))
 		router.Methods(route.Method).Path(route.Pattern).Name(route.Name).Handler(handler)
 	}
+
+	tokenRoute := Route{"SetToken", "GET", "/settoken", router.App.SetToken}
+	router.Methods(tokenRoute.Method).Path(tokenRoute.Pattern).Name(tokenRoute.Name).Handler(Logger(tokenRoute.HandlerFunc, tokenRoute.Name))
 
 	return router
 }
 
-func authMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		secret := []byte("w0Y0hcRiufEliTy4_1BFXMUG-_ugfVPASx0WjHRoRITqUJhYETAhqCZZyUk3r1sN")
-		secretProvider := auth0.NewKeyProvider(secret)
-		audience := []string{"todorest"}
-
-		configuration := auth0.NewConfiguration(secretProvider, audience, "https://todo-rest.eu.auth0.com/", jose.HS256)
-		validator := auth0.NewValidator(configuration)
-
-		token, err := validator.ValidateRequest(r)
-
+func validate(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		// If no Auth cookie is set then return a 404 not found
+		cookie, err := req.Cookie("Auth")
 		if err != nil {
-			fmt.Println(err)
-			fmt.Println("Token is not valid:", token)
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("Unauthorized"))
+			http.NotFound(res, req)
+			return
+		}
+
+		// Return a Token using the cookie
+		token, err := jwt.ParseWithClaims(cookie.Value, &Claims{}, func(token *jwt.Token) (interface{}, error){
+			// Make sure token's signature wasn't changed
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("Unexpected siging method")
+			}
+			return []byte("secret"), nil
+		})
+		if err != nil {
+			http.NotFound(res, req)
+			return
+		}
+
+		// Grab the tokens claims and pass it into the original request
+		if claims, ok := token.Claims.(*Claims); ok && token.Valid {
+			ctx := context.WithValue(req.Context(), "jwt-token", *claims)
+			next.ServeHTTP(res, req.WithContext(ctx))
 		} else {
-			next.ServeHTTP(w, r)
+			http.NotFound(res, req)
+			return
 		}
 	})
 }
